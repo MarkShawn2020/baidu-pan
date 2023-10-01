@@ -54,22 +54,21 @@ def gen_code(index=0, machines_n=1, machine_cur=0):
 
 
 class BasicSpider(scrapy.Spider):
-    name = "basic"
+    name = "success"
     allowed_domains = ["pan.baidu.com"]
     
-    target_id = 'rX2X3ELN90y55Tiqcba3nw'
+    target_id = 'TP_EEGShTgNwlieNrC89bA'
     
     def start_requests(self) -> Iterable[Request]:
-        for i in range(CODE_SPACE_SIZE):
-            code = gen_code(i)
-            yield Request(
-                f'https://pan.baidu.com/share/init?surl={self.target_id}',
-                meta={
-                    "code": code
-                },
-                dont_filter=True,
-                callback=self.parse_init
-            )
+        code = "zhuk"
+        yield Request(
+            f'https://pan.baidu.com/share/init?surl={self.target_id}',
+            meta={
+                "code": code
+            },
+            dont_filter=True,
+            callback=self.parse_init,
+        )
     
     def parse_init(self, response: Response):
         code = response.meta['code']
@@ -123,7 +122,7 @@ class BasicSpider(scrapy.Spider):
         code = response.meta['code']
         
         data = json.loads(response.text)
-        print(data)
+        print({"code": code, "data": data})
         
         errno = data['errno']
         
