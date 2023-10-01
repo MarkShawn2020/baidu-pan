@@ -74,7 +74,6 @@ class BasicSpider(scrapy.Spider):
     def parse_init(self, response: Response):
         code = response.meta['code']
         
-        # todo: 封装成字典
         # ref: GPT + https://docs.scrapy.org/en/latest/topics/downloader-middleware.html?highlight=cookie#cookies-debug
         cookie_jar = SimpleCookie()
         for cookie_item in response.headers.getlist('Set-Cookie'): cookie_jar.load(cookie_item.decode("utf-8"))
@@ -123,7 +122,7 @@ class BasicSpider(scrapy.Spider):
         code = response.meta['code']
         
         data = json.loads(response.text)
-        yield {code: data}
+        yield {"code": code, "response": data}
         
         errno = data['errno']
         
@@ -133,6 +132,9 @@ class BasicSpider(scrapy.Spider):
         if errno == -62:
             raise CloseSpider(f"IP被 ban！")
         
-        elif errno == -12:
+        if errno == -64:
+            raise CloseSpider(f"需要登录！")
+        
+        elif errno in [-12, -9]:
             print('验证码不对')
             return
